@@ -1,109 +1,215 @@
 
-const { createStore } = require("redux");
+// const { createStore } = require("redux");
 
-// state
+const { createStore, applyMiddleware, combineReducers } = require("redux")
+const { default: logger } = require("redux-logger")
 
-const initialCounterState = {
-    count: 0
-}
+// //// state
 
-const initialUserState = {
-  users: ["jamir"],
-};
+// const initialCounterState = {
+//     count: 0
+// }
 
-
-// action 
-
-const incrimentCounter = () => {
-    return {
-        type: "INCRIMENT",
-    };
-}
-const decrimentCounter = () => {
-    return {
-        type: "DECRIMENT",
-    };
-}
-const resetCounter = () => {
-    return {
-        type: "RESET",
-    };
-}
-const incrimentCounterAcrtion = (value) => {
-    return {
-        type: "INCRIMENT_BY_VALUE",
-        payload: value
-    };
-}
+// const initialUserState = {
+//   users: ["jamir"],
+// };
 
 
-const addUser = (users) => {
-    return {
-        type: "ADD_USER",
-        payload: users
-    };
-}
+// //// action 
 
-//create reducer for counter
+// const incrimentCounter = () => {
+//     return {
+//         type: "INCRIMENT",
+//     };
+// }
+// const decrimentCounter = () => {
+//     return {
+//         type: "DECRIMENT",
+//     };
+// }
+// const resetCounter = () => {
+//     return {
+//         type: "RESET",
+//     };
+// }
+// const incrimentCounterAcrtion = (value) => {
+//     return {
+//         type: "INCRIMENT_BY_VALUE",
+//         payload: value
+//     };
+// }
 
-const counterReducer = (state = initialCounterState, action) => {
-    switch (action.type) {
-        case "INCRIMENT":
-            return {
-                ...state,
-                count: state.count + 1
-            }    
+
+// const addUser = (users) => {
+//     return {
+//         type: "ADD_USER",
+//         payload: users
+//     };
+// }
+
+// ////create reducer for counter
+
+// const counterReducer = (state = initialCounterState, action) => {
+//     switch (action.type) {
+//         case "INCRIMENT":
+//             return {
+//                 ...state,
+//                 count: state.count + 1
+//             }    
         
-        case "DECRIMENT":
-            return {
-              ...state,
-              count: state.count - 1,
-            }; 
+//         case "DECRIMENT":
+//             return {
+//               ...state,
+//               count: state.count - 1,
+//             }; 
 
-        case "RESET":
-            return {
-              ...state,
-              count: 0,
-            };  
+//         case "RESET":
+//             return {
+//               ...state,
+//               count: 0,
+//             };  
 
-        case "INCRIMENT_BY_VALUE":
+//         case "INCRIMENT_BY_VALUE":
+//             return {
+//               ...state,
+//               count: state.count + action.payload,
+//             };  
+    
+//         default:
+//             state;
+//     }
+// }
+
+// const userReducer = (state= initialUserState, action) => {
+//     switch (action.type) {
+//         case "ADD_USER": {
+//             return {
+//                 users: [...state.users, action.payload],
+//                 count: state.count + 2
+//             }
+//         }
+//         default :
+//             state
+//     }
+// }
+
+// //// create store 
+
+// const store = createStore(userReducer   );
+
+// store.subscribe(() => {
+//     console.log(store.getState())
+// })
+
+
+// // dispatch action 
+
+// // store.dispatch(incrimentCounter());
+// // store.dispatch(incrimentCounter());
+// // store.dispatch(resetCounter());
+// // store.dispatch(incrimentCounterAcrtion(5));
+// // store.dispatch(addUser("mitu"));
+
+////--------------------------------------------------------------
+
+////product constant
+const GET_PRODUCTS = "GET_PRODUCTS"
+const ADD_PRODUCT = "ADD_PRODUCT"
+////cart constant
+// const GET_CART_ITEMS = "GET_CART_ITEMS";
+// const ADD_CART_ITEM = "ADD_CART_ITEM";
+
+////product state
+const initialProductState = {
+    product: ["sugar", "salt"],
+    numberOfProduct: 2
+}
+////cart state
+// const initialCartState = {
+//     cart: ["sugar"],
+//     numberOfProduct: 1
+// }
+
+
+////product actions
+const getProducts = () => {
+    return {
+        type: GET_PRODUCTS
+    }
+}
+const addProduct = (product) => {
+    return {
+        type: ADD_PRODUCT,
+        payload: product
+    }
+}
+
+////cart actions
+// const getCart = () => {
+//     return {
+//         type: GET_CART_ITEMS
+//     }
+// }
+// const addCart = (cart) => {
+//     return {
+//         type: ADD_CART_ITEM,
+//         payload: cart
+//     }
+// }
+
+
+//// product reducer
+const productReducer = (state = initialProductState, action) => {
+    switch (action.type) {
+        case GET_PRODUCTS:
             return {
-              ...state,
-              count: state.count + action.payload,
-            };  
+                ...state
+            }
+        case ADD_PRODUCT:
+            return {
+                product : [...state.product, action.payload],
+                numberOfProduct : state.numberOfProduct + 1
+            }
     
         default:
-            state;
+            return state;
     }
 }
 
-const userReducer = (state= initialUserState, action) => {
-    switch (action.type) {
-        case "ADD_USER": {
-            return {
-                users: [...state.users, action.payload],
-                count: state.count + 2
-            }
-        }
-        default :
-            state
-    }
-}
+//// cart reducer
+// const cartReducer = (state = initialCartState, action) => {
+//     switch (action.type) {
+//         case GET_CART_ITEMS:
+//             return {
+//                 ...state
+//             }
+//         case ADD_CART_ITEM:
+//             return {
+//                 cart : [...state.cart, action.payload],
+//                 numberOfProduct : state.numberOfProduct + 1
+//             }
+    
+//         default:
+//             return state;
+//     }
+// }
 
-// create store 
+////root reducer
+// const rootReducer = combineReducers({
+//     productR : productReducer,
+//     cartR : cartReducer
+// })
 
-const store = createStore(userReducer);
-
+////store 
+const store = createStore(productReducer, applyMiddleware(logger));
 store.subscribe(() => {
     console.log(store.getState())
-})
+});
+
+store.dispatch(getProducts());
+store.dispatch(addProduct("pen"));
 
 
-// dispatch action 
-
-// store.dispatch(incrimentCounter());
-// store.dispatch(incrimentCounter());
-// store.dispatch(resetCounter());
-// store.dispatch(incrimentCounterAcrtion(5));
-store.dispatch(addUser("mitu"));
-
+////dispatch cart
+// store.dispatch(getCart());
+// store.dispatch(addCart("pen"));
