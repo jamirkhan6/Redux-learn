@@ -113,17 +113,17 @@ const { default: logger } = require("redux-logger")
 ////--------------------------------------------------------------
 
 ////product constant
-const GET_PRODUCTS = "GET_PRODUCTS"
-const ADD_PRODUCT = "ADD_PRODUCT"
+// const GET_PRODUCTS = "GET_PRODUCTS"
+// const ADD_PRODUCT = "ADD_PRODUCT"
 ////cart constant
 // const GET_CART_ITEMS = "GET_CART_ITEMS";
 // const ADD_CART_ITEM = "ADD_CART_ITEM";
 
 ////product state
-const initialProductState = {
-    product: ["sugar", "salt"],
-    numberOfProduct: 2
-}
+// const initialProductState = {
+//     product: ["sugar", "salt"],
+//     numberOfProduct: 2
+// }
 ////cart state
 // const initialCartState = {
 //     cart: ["sugar"],
@@ -132,17 +132,17 @@ const initialProductState = {
 
 
 ////product actions
-const getProducts = () => {
-    return {
-        type: GET_PRODUCTS
-    }
-}
-const addProduct = (product) => {
-    return {
-        type: ADD_PRODUCT,
-        payload: product
-    }
-}
+// const getProducts = () => {
+//     return {
+//         type: GET_PRODUCTS
+//     }
+// }
+// const addProduct = (product) => {
+//     return {
+//         type: ADD_PRODUCT,
+//         payload: product
+//     }
+// }
 
 ////cart actions
 // const getCart = () => {
@@ -159,22 +159,22 @@ const addProduct = (product) => {
 
 
 //// product reducer
-const productReducer = (state = initialProductState, action) => {
-    switch (action.type) {
-        case GET_PRODUCTS:
-            return {
-                ...state
-            }
-        case ADD_PRODUCT:
-            return {
-                product : [...state.product, action.payload],
-                numberOfProduct : state.numberOfProduct + 1
-            }
+// const productReducer = (state = initialProductState, action) => {
+//     switch (action.type) {
+//         case GET_PRODUCTS:
+//             return {
+//                 ...state
+//             }
+//         case ADD_PRODUCT:
+//             return {
+//                 product : [...state.product, action.payload],
+//                 numberOfProduct : state.numberOfProduct + 1
+//             }
     
-        default:
-            return state;
-    }
-}
+//         default:
+//             return state;
+//     }
+// }
 
 //// cart reducer
 // const cartReducer = (state = initialCartState, action) => {
@@ -201,15 +201,87 @@ const productReducer = (state = initialProductState, action) => {
 // })
 
 ////store 
-const store = createStore(productReducer, applyMiddleware(logger));
-store.subscribe(() => {
-    console.log(store.getState())
-});
+// const store = createStore(productReducer, applyMiddleware(logger));
+// store.subscribe(() => {
+//     console.log(store.getState())
+// });
 
-store.dispatch(getProducts());
-store.dispatch(addProduct("pen"));
+// store.dispatch(getProducts());
+// store.dispatch(addProduct("pen"));
 
 
 ////dispatch cart
 // store.dispatch(getCart());
 // store.dispatch(addCart("pen"));
+
+////-----------------------------------------------------------------------
+
+//// fetching data with redux thunk
+
+//constant
+const GET_TODOS_REQUEST = "GET_TODOS_REQUEST"
+const GET_TODOS_SUCCESS = "GET_TODOS_SUCCESS"
+const GET_TODOS_FAILED = "GET_TODOS_FAILED"
+
+//state
+const initialTodosState = {
+    todos : [],
+    isLoading : false,
+    error : null,
+}
+
+//action
+const getTodosRequest = () => {
+    return {
+        type : GET_TODOS_REQUEST
+    }
+}
+const getTodosFailed = (error) => {
+    return {
+        type : GET_TODOS_REQUEST,
+        payload : error
+    }
+}
+const getTodosSuccess = (todos) => {
+    return {
+        type : GET_TODOS_SUCCESS,
+        payload : todos
+    }
+}
+
+//reducer
+const todosReducer = (state = initialTodosState, action) => {
+    switch (action.type) {
+        case GET_TODOS_REQUEST :
+            return {
+                ...state,
+                isLoading : true,
+            }
+        case GET_TODOS_SUCCESS :
+            return {
+                ...state,
+                isLoading : false,
+                todos : action.payload,
+            }
+        case GET_TODOS_FAILED :
+            return {
+                ...state,
+                isLoading : false,
+                error : action.payload
+            }
+    
+        default:
+            return state;
+    }
+}
+
+//async action creator
+
+//store 
+const store = createStore(todosReducer);
+
+store.subscribe(() => {
+    console.log(store.getState())
+})
+
+
