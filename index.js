@@ -1,8 +1,10 @@
 
 // const { createStore } = require("redux");
 
-const { createStore, applyMiddleware, combineReducers } = require("redux")
-const { default: logger } = require("redux-logger")
+// const { default: axios } = require("axios");
+// const { createStore, applyMiddleware, combineReducers } = require("redux")
+// const { default: logger } = require("redux-logger");
+// const thunk = require("redux-thunk").default;
 
 // //// state
 
@@ -216,72 +218,70 @@ const { default: logger } = require("redux-logger")
 
 ////-----------------------------------------------------------------------
 
-//// fetching data with redux thunk
+const { default: axios } = require("axios");
+const { createStore, applyMiddleware } = require("redux");
+const { thunk } = require("redux-thunk");
 
-//constant
-const GET_TODOS_REQUEST = "GET_TODOS_REQUEST"
-const GET_TODOS_SUCCESS = "GET_TODOS_SUCCESS"
-const GET_TODOS_FAILED = "GET_TODOS_FAILED"
+// constants
+const GET_TODOS_REQUEST = "GET_TODOS_REQUEST";
+const GET_TODOS_SUCCESS = "GET_TODOS_SUCCESS";
+const GET_TODOS_FAILED = "GET_TODOS_FAILED";
+const API_URL = "https://jsonplaceholder.typicode.com/todos";
 
-//state
+// state
 const initialTodosState = {
-    todos : [],
-    isLoading : false,
-    error : null,
-}
+  todos: [],
+  isLoading: false,
+  error: null,
+};
 
-//action
-const getTodosRequest = () => {
-    return {
-        type : GET_TODOS_REQUEST
-    }
-}
-const getTodosFailed = (error) => {
-    return {
-        type : GET_TODOS_REQUEST,
-        payload : error
-    }
-}
-const getTodosSuccess = (todos) => {
-    return {
-        type : GET_TODOS_SUCCESS,
-        payload : todos
-    }
-}
+// actions
+const getTodosRequest = () => ({ type: GET_TODOS_REQUEST });
+const getTodosSuccess = (todos) => ({
+  type: GET_TODOS_SUCCESS,
+  payload: todos,
+});
+const getTodosFailed = (error) => ({ type: GET_TODOS_FAILED, payload: error });
 
-//reducer
+// reducer
 const todosReducer = (state = initialTodosState, action) => {
-    switch (action.type) {
-        case GET_TODOS_REQUEST :
-            return {
-                ...state,
-                isLoading : true,
-            }
-        case GET_TODOS_SUCCESS :
-            return {
-                ...state,
-                isLoading : false,
-                todos : action.payload,
-            }
-        case GET_TODOS_FAILED :
-            return {
-                ...state,
-                isLoading : false,
-                error : action.payload
-            }
-    
-        default:
-            return state;
-    }
-}
+  switch (action.type) {
+    case GET_TODOS_REQUEST:
+      return { ...state, isLoading: true };
+    case GET_TODOS_SUCCESS:
+      return { ...state, isLoading: false, todos: action.payload };
+    case GET_TODOS_FAILED:
+      return { ...state, isLoading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
 
-//async action creator
+// async action creator
+const fetchData = () => {
+  return (dispatch) => {
+    dispatch(getTodosRequest());
+    axios
+      .get(API_URL)
+      .then((res) => {
+        const todos = res.data;
+        const titles = todos.map((todo) => todo.title)
+        dispatch(getTodosSuccess(titles))
+      })
+      .catch((error) => {
+        dispatch(getTodosFailed(error.message));
+      });
+  };
+};
 
-//store 
-const store = createStore(todosReducer);
+// store
+const store = createStore(todosReducer, applyMiddleware(thunk));
 
+// subscribe
 store.subscribe(() => {
-    console.log(store.getState())
-})
+  console.log(store.getState());
+});
 
+// dispatch async action
+store.dispatch(fetchData());
 
